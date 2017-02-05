@@ -1,6 +1,6 @@
 {
   "name": "cherish",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A minimal cache wrapper for all kinds of function calls.",
   "author": "Mike Arvela <mike@arvela.net>",
   "license": "MIT",
@@ -14,8 +14,7 @@
   "eslintConfig": {
     "extends": "./node_modules/righteous-js/.eslintrc.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "righteous-js": "^1.1.1"
   },
