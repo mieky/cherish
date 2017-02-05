@@ -26,15 +26,18 @@ function wrapFunction(fn, ttlSeconds) {
         log(`Function ${fn.name} called`);
 
         const lastFetchTime = storage[TIME_ID];
-        const isPreviousResultStillValid =
-            (!!lastFetchTime && ((Date.now() - lastFetchTime) / 1000) < TTL_SECONDS);
+        const lastFetchAge = (Date.now() - lastFetchTime) / 1000;
+        const previousFetchFinished = storage[RESULT_ID] !== undefined;
 
-        if (isPreviousResultStillValid) {
+        const canUseResultFromCache = !!lastFetchTime &&
+            previousFetchFinished && lastFetchAge < TTL_SECONDS;
+
+        if (canUseResultFromCache) {
             log("Previous result still valid, returning from cache");
 
             return new Promise((resolve, reject) => {
                 try {
-                    const result = JSON.parse(storage[RESULT_ID]);
+                    const result = storage[RESULT_ID];
                     resolve(result);
                 } catch (err) {
                     reject(err);
@@ -48,7 +51,6 @@ function wrapFunction(fn, ttlSeconds) {
         }
 
         log("Refreshing...");
-
         storage[TIME_ID] = Date.now();
 
         const currentCall = Promise.resolve(fn(args))
@@ -56,7 +58,7 @@ function wrapFunction(fn, ttlSeconds) {
                 log("Caching result...");
 
                 // Cache results for next use
-                storage[RESULT_ID] = JSON.stringify(result);
+                storage[RESULT_ID] = result;
 
                 // Erase pending call from bookkeeping
                 pendingCalls[cacheKey] = null;

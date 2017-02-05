@@ -21,7 +21,7 @@ Requires Node 6+ for ES6 compatibility.
 
 Simply wrap your function with `cherish(function, ttlSeconds)`, and it will return you the same result for each subsequent function call for the time limit you specify (defaults to 5 minutes).
 
-It supports functions that return either a Promise or a plain Javascript value (as long as it survives a call to JSON.parse()).
+It supports functions that return either a Promise or a plain Javascript value.
 
 ## Examples
 
@@ -58,6 +58,7 @@ You will get more output for debugging if you set the environment variable `DEBU
 
 ## Changelog
 
+- **0.1.1** Fix for properly handling unfinished calls.
 - **0.1.0** First release.
 
 ## Acknowledgments
