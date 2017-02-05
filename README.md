@@ -1,6 +1,6 @@
 # cherish
 
-[![npm version](https://badge.fury.io/js/cherish)](https://travis-ci.org/mieky/trello-fetcher)
+[![npm version](https://badge.fury.io/js/cherish)](https://travis-ci.org/mieky/cherish)
 
 A minimal cache wrapper for all kinds of function calls.
 
