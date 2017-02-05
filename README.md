@@ -7,7 +7,7 @@ A minimal cache wrapper for all kinds of function calls.
 
 Caches results in-memory, no external dependencies.
 
-Particularly useful for e.g. effortless caching of API calls with [node-fetch](https://github.com/bitinn/node-fetch). Used for the very purpose in [trello-fetcher](https://github.com/mieky/trello-fetcher).
+Particularly useful for e.g. effortless caching of API calls with [node-fetch](https://github.com/bitinn/node-fetch).
 
 ## Install
 
