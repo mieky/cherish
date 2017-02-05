@@ -1,0 +1,29 @@
+{
+  "name": "cherish",
+  "version": "0.0.1",
+  "description": "A minimal cache wrapper for all kinds of function calls.",
+  "author": "Mike Arvela <mike@arvela.net>",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "node_modules/righteous-js/lint.js"
+  },
+  "config": {
+    "lintTargets": "src/**/*.js test/**/*.js"
+  },
+  "eslintConfig": {
+    "extends": "./node_modules/righteous-js/.eslintrc.js"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "righteous-js": "^1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mieky/cherish.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mieky/cherish/issues"
+  }
+}
