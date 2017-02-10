@@ -1,19 +1,33 @@
 const storage = {};
 const pendingCalls = {};
 
+/**
+ * Conditionally console.log() the given args, if environment variable DEBUG is set.
+ */
 function log(args) {
     if (!process.env.DEBUG) {
         return;
     }
-    console.log(args);
+    console.log.apply(args);
+}
+
+function hashCode(str) {
+    /* eslint-disable no-bitwise */
+    return str.split("").reduce((prevHash, currVal) =>
+        ((prevHash << 5) - prevHash) + currVal.charCodeAt(0), 0);
+    /* eslint-enable */
 }
 
 // Wrap a given function so that the result is cached and only refreshed
 // after a given period of time has passed since the last result
 function wrapFunction(fn, ttlSeconds) {
-    const cacheKey = fn.name;
+    if (!fn || !(fn instanceof Function)) {
+        throw new Error("First argument to wrapFunction() should be a function");
+    }
+
+    const cacheKey = fn.name || hashCode(fn.toString());
     if (!cacheKey) {
-        throw new Error(`Couldn't figure out cache key from function.name`);
+        throw new Error(`Couldn't determine cache key for function to be cached`);
     }
 
     const TIME_ID = `lastTime_${cacheKey}`;
