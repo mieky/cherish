@@ -13,8 +13,7 @@ describe("Basic usage", () => {
     });
 
     it("should wrap an anonymous function", () => {
-        const anonFn = () => true;
-        const wrappedAnonFn = cherish(anonFn);
+        const wrappedAnonFn = cherish((() => true));
 
         expect.assertions(2);
         expect(wrappedAnonFn).toBeInstanceOf(Function);
