@@ -2,20 +2,17 @@
 
 [![npm version](https://badge.fury.io/js/cherish.svg)](http://badge.fury.io/js/cherish) [![Build Status](https://travis-ci.org/mieky/cherish.svg?branch=master)](https://travis-ci.org/mieky/cherish)
 
-
 A minimal cache wrapper for all kinds of function calls.
 
-Caches results in-memory, no runtime dependencies.
+Caches results in-memory, no runtime dependencies. Particularly useful for e.g. effortless caching of API calls with [node-fetch](https://github.com/bitinn/node-fetch).
 
-Particularly useful for e.g. effortless caching of API calls with [node-fetch](https://github.com/bitinn/node-fetch).
+Requires **Node 4.0** or newer, with npm 3.
 
 ## Installation
 
 ```
 npm install --save cherish
 ```
-
-Requires **Node 4 or newer**.
 
 ## Usage
 
