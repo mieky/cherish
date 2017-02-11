@@ -6,8 +6,9 @@
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
-    "build": "node_modules/.bin/babel src --out-dir dist --presets=es2015",
+    "build": "babel src --out-dir dist --presets=es2015",
     "lint": "node_modules/righteous-js/lint.js",
+    "prepublish": "npm run build",
     "test": "jest"
   },
   "config": {
