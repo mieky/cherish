@@ -2,7 +2,10 @@ language: node_js
 node_js:
 - 4
 - 6
-script: npm run lint --silent && npm run test
+script:
+- npm run lint --silent
+- npm run test
+- npm run build
 notifications:
   email:
   - mike@arvela.net
