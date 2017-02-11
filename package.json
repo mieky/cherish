@@ -4,8 +4,9 @@
   "description": "A minimal cache wrapper for all kinds of function calls.",
   "author": "Mike Arvela <mike@arvela.net>",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "node_modules/.bin/babel src --out-dir dist --presets=es2015",
     "lint": "node_modules/righteous-js/lint.js",
     "test": "jest"
   },
@@ -20,6 +21,11 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-core": "^6.22.1",
+    "babel-jest": "^18.0.0",
+    "babel-polyfill": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
     "jest": "^18.1.0",
     "righteous-js": "^1.1.1"
   },
