@@ -2,14 +2,7 @@ const cherish = require("../src/index");
 
 describe("Basic usage", () => {
     it("should throw an Error when called without a Function argument", () => {
-        let errorThrown = false;
-        try {
-            const foo = cherish();
-            console.log(foo);
-        } catch (err) {
-            errorThrown = true;
-        }
-        expect(errorThrown).toBe(true);
+        expect(cherish).toThrow("First argument to wrapFunction() should be a function");
     });
 
     it("should wrap an anonymous function", () => {
