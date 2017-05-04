@@ -2,9 +2,9 @@
 
 [![npm version](https://badge.fury.io/js/cherish.svg)](http://badge.fury.io/js/cherish) [![Build Status](https://travis-ci.org/mieky/cherish.svg?branch=master)](https://travis-ci.org/mieky/cherish)
 
-A minimal cache wrapper for all kinds of function calls.
+A minimal in-memory cache wrapper for all kinds of function calls. Tiny footprint, no runtime dependencies!
 
-Caches results in-memory, no runtime dependencies. Particularly useful for e.g. effortless caching of API calls with [node-fetch](https://github.com/bitinn/node-fetch).
+Useful for e.g. effortless caching of API calls with [node-fetch](https://github.com/bitinn/node-fetch).
 
 Requires **Node 4.0** or newer, with npm 3.
 
@@ -14,22 +14,49 @@ Requires **Node 4.0** or newer, with npm 3.
 npm install --save cherish
 ```
 
+Run tests with:
+
+```
+npm run test
+```
+
 ## Usage
 
 `const myCachedFunction = cherish(myFunction, [ttlSeconds]);`
 
-Simply wrap your function with `cherish(myFunction)`, and it will return you the same result for each subsequent function call. You can specify how long the result is remembered by specifying a second argument (defaults to 5 minutes).
+Simply wrap your function with `cherish(myFunction)`, and it will return you the same result for each subsequent function call with the same arguments.
 
-You will always get back a `Promise`, regardless of if your wrapped function returns a Promise or an atomic value.
+You can optionally specify how long the result is remembered by specifying a second argument `ttlSeconds` (defaults to 5 minutes).
+
+**You will always get back a Promise**, regardless of if your wrapped function returns a Promise or an atomic value.
 
 ## Examples
+
+Remember results for specific arguments (same result with same arguments):
+
+```js
+const cherish = require("cherish");
+
+function generateParticipantNumber(name) {
+    return `${name} gets ${Math.round(Math.random() * 100)}`;
+};
+
+const rememberNumber = cherish(generateParticipantNumber);
+const printResult = res => console.log(res);
+
+rememberNumber("Alice").then(printResult); // "Alice gets 52"
+rememberNumber("Bob").then(printResult);   // "Bob gets 74"
+rememberNumber("Alice").then(printResult); // "Alice gets 52"
+```
 
 Remember the generated random number, but only for a second:
 ```js
 const cherish = require("cherish");
 
 // Remember all calls to getRandomNumber() for one second
-const getRandomNumber = () => Math.round(Math.random() * 5000);
+function getRandomNumber() {
+    return Math.round(Math.random() * 5000);
+}
 const promiseRandomNumber = cherish(getRandomNumber, 1);
 
 // First calls will print the same result...
@@ -40,19 +67,15 @@ promiseRandomNumber().then(printResult);
 
 // Try again after the cache has invalidated!
 setTimeout(() => {
-    console.log("After two seconds...");
+    console.log("Two seconds have passed!");
     promiseRandomNumber().then(printResult);
 }, 2000);
-```
 
-Would print something like:
-
-```
-264
-264
-264
-After two seconds...
-1296
+// 264
+// 264
+// 264
+// Two seconds have passed!
+// 1296
 ```
 
 You will get more output for debugging if you set the environment variable `DEBUG` to any non-falsy value.
