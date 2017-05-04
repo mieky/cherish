@@ -1,6 +1,6 @@
 {
   "name": "cherish",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "A minimal cache wrapper for all kinds of function calls.",
   "author": "Mike Arvela <mike@arvela.net>",
   "license": "MIT",
