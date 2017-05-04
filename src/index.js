@@ -11,6 +11,11 @@ function log(args) {
     console.log.apply(args);
 }
 
+/**
+ * Generate a hashcode from string.
+ *
+ * @param {string} str Subject string
+ */
 function hashCode(str) {
     /* eslint-disable no-bitwise */
     return str.split("").reduce((prevHash, currVal) =>
@@ -18,26 +23,48 @@ function hashCode(str) {
     /* eslint-enable */
 }
 
-// Wrap a given function so that the result is cached and only refreshed
-// after a given period of time has passed since the last result
+/**
+ * Get cache key specifically for the invocation fn(args).
+ *
+ * @param {Function} fn Function to determine cache key for
+ * @param {*} args Invocation argument list to include in cache key
+ */
+function getCacheKey(fn, args = []) {
+    const fnName = fn.name || hashCode(fn.toString());
+    return JSON.stringify([fnName, ...args], (key, value) => {
+        if (typeof value === "function") {
+            return value.toString();
+        }
+        return value;
+    });
+}
+
+/**
+ * Wrap a given function so that the result is cached and only refreshed
+ * after a given period of time has passed since the last result.
+ *
+ * @param {Function} fn Function to wrap
+ * @param {*} [ttlSeconds] Number of seconds the result is valid
+ */
 function wrapFunction(fn, ttlSeconds) {
     if (!fn || !(fn instanceof Function)) {
         throw new Error("First argument to wrapFunction() should be a function");
     }
 
-    const cacheKey = fn.name || hashCode(fn.toString());
-    if (!cacheKey) {
-        throw new Error(`Couldn't determine cache key for function to be cached`);
-    }
-
-    const TIME_ID = `lastTime_${cacheKey}`;
-    const RESULT_ID = `lastResult_${cacheKey}`;
     const TTL_SECONDS = ttlSeconds || 300;
+    log(`Caching calls to ${getCacheKey(fn)} (${TTL_SECONDS} seconds)`);
 
-    log(`Caching calls to ${cacheKey} (${TTL_SECONDS} seconds)`);
-
-    return function returnCachedResultAsync(args) {
+    return function returnCachedResultAsync(...args) {
         log(`Function ${fn.name} called`);
+
+        // Take arguments into account -> cache key might differ between invocations
+        const cacheKey = getCacheKey(fn, args);
+        if (!cacheKey) {
+            throw new Error(`Couldn't determine cache key for function to be cached`);
+        }
+
+        const TIME_ID = `lastTime_${cacheKey}`;
+        const RESULT_ID = `lastResult_${cacheKey}`;
 
         const lastFetchTime = storage[TIME_ID];
         const lastFetchAge = (Date.now() - lastFetchTime) / 1000;
@@ -67,7 +94,7 @@ function wrapFunction(fn, ttlSeconds) {
         log("Refreshing...");
         storage[TIME_ID] = Date.now();
 
-        const currentCall = Promise.resolve(fn(args))
+        const currentCall = Promise.resolve(fn.apply(this, args))
             .then(result => {
                 log("Caching result...");
 
