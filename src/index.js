@@ -1,4 +1,4 @@
-const storage = {};
+const defaultStorage = new Map();
 const pendingCalls = {};
 
 /**
@@ -31,27 +31,38 @@ function hashCode(str) {
  */
 function getCacheKey(fn, args = []) {
     const fnName = fn.name || hashCode(fn.toString());
-    return JSON.stringify([fnName, ...args], (key, value) => {
+    const replacer = (key, value) => {
         if (typeof value === "function") {
             return value.toString();
         }
         return value;
-    });
+    };
+    return JSON.stringify([fnName, ...args], replacer);
 }
 
 /**
  * Wrap a given function so that the result is cached and only refreshed
  * after a given period of time has passed since the last result.
  *
+ * Possible keys for the `options` object:
+ * - ttl: Number of seconds the result is valid (defaults to 300)
+ * - get: custom storage get function (optional)
+ * - set: custom storage set function (optional)
+ *
  * @param {Function} fn Function to wrap
- * @param {*} [ttlSeconds] Number of seconds the result is valid
+ * @param {Object} [options]
  */
-function wrapFunction(fn, ttlSeconds) {
+function wrapFunction(fn, options = {}) {
     if (!fn || !(fn instanceof Function)) {
         throw new Error("First argument to wrapFunction() should be a function");
     }
 
-    const TTL_SECONDS = ttlSeconds || 300;
+    // Use cache getter and setter provided in options, or fallback to default
+    const storage = (options.get && options.set) ?
+        { get: options.get, set: options.set } :
+        defaultStorage;
+
+    const TTL_SECONDS = options.ttl || 300;
     log(`Caching calls to ${getCacheKey(fn)} (${TTL_SECONDS} seconds)`);
 
     return function returnCachedResultAsync(...args) {
@@ -66,9 +77,9 @@ function wrapFunction(fn, ttlSeconds) {
         const TIME_ID = `lastTime_${cacheKey}`;
         const RESULT_ID = `lastResult_${cacheKey}`;
 
-        const lastFetchTime = storage[TIME_ID];
+        const lastFetchTime = storage.get(TIME_ID);
         const lastFetchAge = (Date.now() - lastFetchTime) / 1000;
-        const previousFetchFinished = storage[RESULT_ID] !== undefined;
+        const previousFetchFinished = storage.get(RESULT_ID) !== undefined;
 
         const canUseResultFromCache = !!lastFetchTime &&
             previousFetchFinished && lastFetchAge < TTL_SECONDS;
@@ -78,7 +89,7 @@ function wrapFunction(fn, ttlSeconds) {
 
             return new Promise((resolve, reject) => {
                 try {
-                    const result = storage[RESULT_ID];
+                    const result = storage.get(RESULT_ID);
                     resolve(result);
                 } catch (err) {
                     reject(err);
@@ -92,14 +103,14 @@ function wrapFunction(fn, ttlSeconds) {
         }
 
         log("Refreshing...");
-        storage[TIME_ID] = Date.now();
+        storage.set(TIME_ID, Date.now());
 
         const currentCall = Promise.resolve(fn.apply(this, args))
             .then(result => {
                 log("Caching result...");
 
                 // Cache results for next use
-                storage[RESULT_ID] = result;
+                storage.set(RESULT_ID, result);
 
                 // Erase pending call from bookkeeping
                 pendingCalls[cacheKey] = null;
