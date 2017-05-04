@@ -82,6 +82,7 @@ You will get more output for debugging if you set the environment variable `DEBU
 
 ## Changelog
 
+- **0.4.0** Support argument-based caching.
 - **0.3.0** Add backwards compatibility for Node 4.
 - **0.2.0** Support anonymous functions, add basic tests.
 - **0.1.1** Fix for properly handling unfinished calls.
