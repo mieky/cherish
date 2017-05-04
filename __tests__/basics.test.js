@@ -30,7 +30,7 @@ describe("Basic usage", () => {
         const getRandomNumber = () => Math.round(Math.random() * 5000);
 
         // Remember all calls to getRandomNumber() for one second
-        const promiseRandomNumber = cherish(getRandomNumber, 1);
+        const promiseRandomNumber = cherish(getRandomNumber, { ttl: 1 });
 
         let firstValue = null;
         promiseRandomNumber().then(result => {
