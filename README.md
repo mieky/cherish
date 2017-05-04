@@ -16,9 +16,9 @@ npm install --save cherish
 
 ## Usage
 
-`const myCachedFunction = cherish(myFunction);`
+`const myCachedFunction = cherish(myFunction, [ttlSeconds]);`
 
-Simply wrap your function with `cherish(myFunction, ttlSeconds)`, and it will return you the same result for each subsequent function call. You can specify how long the result is remembered by specifying a second argument (defaults to 5 minutes).
+Simply wrap your function with `cherish(myFunction)`, and it will return you the same result for each subsequent function call. You can specify how long the result is remembered by specifying a second argument (defaults to 5 minutes).
 
 You will always get back a `Promise`, regardless of if your wrapped function returns a Promise or an atomic value.
 
