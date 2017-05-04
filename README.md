@@ -20,17 +20,24 @@ Run tests with:
 npm run test
 ```
 
-## Usage
+## Getting started
 
-`const myCachedFunction = cherish(myFunction, [ttlSeconds]);`
+`const myCachedFunction = cherish(myFunction, [options]);`
 
 Simply wrap your function with `cherish(myFunction)`, and it will return you the same result for each subsequent function call with the same arguments.
 
-You can optionally specify how long the result is remembered by specifying a second argument `ttlSeconds` (defaults to 5 minutes).
+By design, **you will always get back a Promise**. This is the same regardless of the type of your wrapped function.
 
-**You will always get back a Promise**, regardless of if your wrapped function returns a Promise or an atomic value.
+### Options
+You can specify the following options:
 
-## Examples
+- `ttl`: how long to remember the results, in seconds (default: `300`)
+- `get`: custom cache getter
+- `set`: custom cache setter
+
+
+
+## Usage examples
 
 Remember results for specific arguments (same result with same arguments):
 
@@ -53,11 +60,12 @@ Remember the generated random number, but only for a second:
 ```js
 const cherish = require("cherish");
 
-// Remember all calls to getRandomNumber() for one second
 function getRandomNumber() {
     return Math.round(Math.random() * 5000);
 }
-const promiseRandomNumber = cherish(getRandomNumber, 1);
+
+// Remember all calls to getRandomNumber() for one second
+const promiseRandomNumber = cherish(getRandomNumber, { ttl: 1 });
 
 // First calls will print the same result...
 const printResult = res => console.log(res);
