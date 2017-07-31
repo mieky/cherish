@@ -112,7 +112,7 @@ const fetchTrelloURLCached = cherish(fetchTrelloURL, {
 
 - **1.0.0** Support customizable storage.
     - CHANGED: initialization syntax, the second argument `ttlSeconds` should be now passed in the options, for example: `cherish(myFunction, { ttl: 60 })`
-    - It's now ossible to define a custom cache instead of the default in-memory cache by specifying the `get` and `set` options upon [initialization](#options).
+    - It's now possible to define a custom cache instead of the default in-memory cache by specifying the `get` and `set` options upon [initialization](#options).
 
 - **0.4.0** Support argument-based caching.
 - **0.3.0** Add backwards compatibility for Node 4.
